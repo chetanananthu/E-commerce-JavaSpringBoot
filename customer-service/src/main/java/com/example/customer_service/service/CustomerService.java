@@ -1,7 +1,9 @@
 package com.example.customer_service.service;
 
 import com.example.customer_service.entity.Customer;
+import com.example.customer_service.feign.CustomerInterface;
 import com.example.customer_service.model.CustomerDto;
+import com.example.customer_service.model.OrderDto;
 import com.example.customer_service.repository.CustomerRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,9 @@ import java.util.Optional;
 public class CustomerService {
     @Autowired
     private CustomerRepository customerRepository;
+
+    @Autowired
+    private CustomerInterface cusotmerInterface;
 
     public List<CustomerDto> getAllCustomers() {
         List<Customer> customers = customerRepository.findAll();
@@ -36,6 +41,19 @@ public class CustomerService {
         Optional<Customer> customer = customerRepository.findById(id);
         CustomerDto customerDto = new CustomerDto();
         BeanUtils.copyProperties(customer.get(), customerDto);
+        return customerDto;
+    }
+
+    public CustomerDto getOrdersByCustomerId(long id){
+        Optional<Customer>customer=customerRepository.findById(id);
+        CustomerDto customerDto=new CustomerDto();
+        customerDto.setId(customer.get().getId());
+        customerDto.setFirstName(customer.get().getFirstName());
+        customerDto.setLastName(customer.get().getLastName());
+        customerDto.setEmail(customer.get().getEmail());
+        customerDto.setPhoneNumber(customer.get().getPhoneNumber());
+        List<OrderDto>orders=cusotmerInterface.getOrdersByCustomerId(id).getBody();
+        customerDto.setOrders(orders);
         return customerDto;
     }
 

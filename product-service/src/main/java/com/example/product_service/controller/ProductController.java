@@ -29,7 +29,7 @@ public class ProductController {
     }
 
     @GetMapping("/orders/{orderId}")
-    public ResponseEntity<List<ProductDto>> getProductsByOrderId(@PathVariable("orderId") int orderId){
+    public ResponseEntity<List<ProductDto>> getProductsByOrderId(@PathVariable("orderId") long orderId){
         List<ProductDto> productDtos=productService.getProductByOrderId(orderId);
         return new ResponseEntity<>(productDtos,HttpStatus.OK);
     }

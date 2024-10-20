@@ -40,7 +40,7 @@ public class ProductService {
         return productDto;
     }
 
-    public List<ProductDto>getProductByOrderId(int id){
+    public List<ProductDto>getProductByOrderId(long id){
         List<Product>products=productRepository.findByOrderId(id);
         List<ProductDto>productDtos=new ArrayList<>();
         products.stream().forEach(product -> {
@@ -48,8 +48,8 @@ public class ProductService {
             productDto.setId(product.getId());
             productDto.setName(product.getName());
             productDto.setPrice(product.getPrice());
-            productDto.setQuantity(productDto.getQuantity());
-            productDto.setOrderId(productDto.getOrderId());
+            productDto.setQuantity(product.getQuantity());
+            productDto.setOrderId(product.getOrderId());
             productDtos.add(productDto);
         });
         return productDtos;

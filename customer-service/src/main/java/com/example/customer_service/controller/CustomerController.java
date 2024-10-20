@@ -3,6 +3,7 @@ package com.example.customer_service.controller;
 import com.example.customer_service.model.CustomerDto;
 import com.example.customer_service.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,11 @@ public class CustomerController {
     public ResponseEntity<CustomerDto> getACustomerById(@PathVariable ("id") long id){
         CustomerDto customerDto=customerService.getCustomerById(id);
         return new ResponseEntity<>(customerDto,HttpStatus.OK);
+    }
+    @GetMapping("orders/{id}")
+    public ResponseEntity<CustomerDto>getOrdersByCustomerId(@PathVariable("id")long id){
+        CustomerDto customerDto=customerService.getOrdersByCustomerId(id);
+        return new ResponseEntity<>(customerDto, HttpStatus.OK);
     }
 
     @PostMapping

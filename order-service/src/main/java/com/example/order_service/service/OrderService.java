@@ -1,8 +1,11 @@
 package com.example.order_service.service;
 
 import com.example.order_service.entity.Orders;
+import com.example.order_service.feign.OrderInteface;
 import com.example.order_service.model.OrderDto;
+import com.example.order_service.model.ProductDto;
 import com.example.order_service.repository.OrderRepository;
+import org.hibernate.query.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +18,9 @@ public class OrderService {
 
     @Autowired
     OrderRepository orderRepository;
+
+    @Autowired
+    OrderInteface orderInteface;
 
     public List<OrderDto> getAllOrders(){
         List<Orders> orders =orderRepository.findAll();
@@ -42,13 +48,29 @@ public class OrderService {
         orderDto.setTotalAmount(order.get().getTotalAmount());
         orderDto.setPaymentStatus(order.get().getPaymentStatus());
         orderDto.setOrderDate(order.get().getOrderDate());
+        List<ProductDto>productDtos=orderInteface.getProductsByOrderId(id).getBody();
+        orderDto.setProducts(productDtos);
         return orderDto;
     }
 
-    public OrderDto addOrder(OrderDto orderDto){
-        System.out.println(orderDto.toString());
-        Orders order=new Orders();
+    public List<OrderDto> getOrdersByCustomerId(long id){
+        List<Orders> orders =orderRepository.findByCustomerId(id);
+        List<OrderDto>orderDtos=new ArrayList<>();
+        orders.stream().forEach(order->{
+            OrderDto orderDto=new OrderDto();
+            orderDto.setId(order.getId());
+            orderDto.setQuanity(order.getQuanity());
+            orderDto.setCustomerId(order.getCustomerId());
+            orderDto.setTotalAmount(order.getTotalAmount());
+            orderDto.setPaymentStatus(order.getPaymentStatus());
+            orderDto.setOrderDate(order.getOrderDate());
+            orderDtos.add(orderDto);
+        });
+        return orderDtos;
+    }
 
+    public OrderDto addOrder(OrderDto orderDto){
+        Orders order=new Orders();
         order.setId(orderDto.getId());
         order.setQuanity(orderDto.getQuanity());
         order.setCustomerId(orderDto.getCustomerId());
